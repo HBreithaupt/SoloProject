@@ -1,0 +1,14 @@
+github repo: https://github.com/HBreithaupt/SoloProject.git
+
+MVP features
+- account creation
+- pizza configuration
+- order total display page
+
+
+
+Expanded Features
+- account editing
+- stripe implementation
+- gps confirmation
+- multiple items in order
