@@ -25,36 +25,39 @@
       <a class="navbar-brand" href="/">Haven's Pizza</a>
 
       <span class="navbar-text">
-        <a href="/">tes</a> |
-        <a href="/">test</a>
+        <a href="/login">Already have an account? Login</a>
       </span>
     </nav>
 
     <!-- registration form -->
     <div class="container mt-5 text-white">
-      <form class="needs-validation" action="/" method="post" novalidate>
+      <form class="needs-validation" action="/users/add" method="post" novalidate>
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="input_fname">First Name</label>
-            <input type="text" id="input_fname" class="form-control" required>
+            <input type="text" name="input_fname" class="form-control" required>
           </div>
           <div class="form-group col-md-6">
             <label for="input_lname">Last Name</label>
-            <input type="text" id="input_lname" class="form-control" required>
+            <input type="text" name="input_lname" class="form-control" required>
           </div>
         </div>
         <div class="form-group">
           <label for="input_email">Email</label>
-          <input type="email" id="input_email" class="form-control" required>
+          <input type="email" name="input_email" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="input_address">Address</label>
+          <input type="text" name="input_address" class="form-control" required>
         </div>
         <div class="form-row">
           <div class="form-group col-md-9">
             <label for="input_city">City</label>
-            <input type="text" id="input_city" class="form-control" required>
+            <input type="text" name="input_city" class="form-control" required>
           </div>
           <div class="form-group col-md-3">
             <label for="input_state">State</label>
-            <select class="form-control" name="input_state" id="input_state" required>
+            <select class="form-control" name="input_state" name="input_state" required>
               <option value="" selected>Choose a state...</option>
               <option value="AK">Alaska</option>
 			        <option value="AL">Alabama</option>
@@ -113,11 +116,11 @@
         </div>
         <div class="form-group">
           <label for="input_password">Password</label>
-          <input type="password" id="input_password" class="form-control" required>
+          <input type="password" name="input_password" class="form-control" required>
         </div>
         <div class="form-group">
           <label for="input_confirm_password">Confirm Password</label>
-          <input type="password" id="input_confirm_password" class="form-control" required>
+          <input type="password"name="input_confirm_password" class="form-control" required>
         </div>
         <div class="form-group">
           <button type="submit" class="btn btn-primary" name="button">Sign Up</button>
