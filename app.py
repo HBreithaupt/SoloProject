@@ -1,8 +1,10 @@
-from flask import render_template, redirect, session, request
-from config import app, db, bcrypt
+from flask import render_template, redirect, session, request, flash
+from config import app, db, bcrypt, alerts
+import json
 
 # import database classes
 from models import User
+
 
 
 # home-page
@@ -13,24 +15,27 @@ def index():
 # add a user
 @app.route("/users/add", methods=["POST"])
 def add_user():
+
+    isValid = True
     # check email format
     if not User.verify_email(request.form['input_email']):
-        flash("Invalid email.")
+        isValid = False
+        alerts.append("Invalid email.")
+
+
+    if User.query.filter_by(email=request.form['input_email']).all():
+        isValid = False
+        alerts.append("There is an account already registered with that email.")
 
     #check password
-    pw_hash = bcrypt.generate_password_hash(request.form['input_password'])
     if not request.form['input_password'] == request.form['input_confirm_password']:
-        flash("Passwords don't match.")
+        isValid = False
+        alerts.append("Passwords don't match.")
 
 
-    data = request.form
-    print(data['input_state'])
-    # every other field must be filled to get to this point so add a user
-    if not '_flashes' in session.keys():
-        new_user = User(first_name=data['input_fname'], last_name=data['input_lname'], email=data['input_email'],address=data['input_address'],city=data['input_address'],state=data['input_state'],password=pw_hash)
-
-        db.session.add(new_user)
-        db.session.commit()
+    # add user
+    if isValid:
+        User.add_user(request.form)
 
     return redirect("/")
 
@@ -39,8 +44,21 @@ def add_user():
 def login():
     return render_template("login.html")
 
+@app.route("/login/process", methods=["POST"])
+def process_login():
+    result = User.attempt_login(request.form)
 
+    if result:
+        return redirect("/dashboard")
 
+    return redirect("/login")
+
+# retrieve alerts
+@app.route('/alerts/retrieve')
+def retrieve_alerts():
+    result = json.dumps(alerts)
+    alerts.clear()
+    return result
 
 if __name__ == "__main__":
     app.run(debug=True)

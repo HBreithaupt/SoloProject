@@ -11,3 +11,5 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+alerts =[]
