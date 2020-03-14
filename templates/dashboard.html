@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Haven's Pizza</title>
+
+    <!-- bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+
+    <!-- my sheets and scripts -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='scripts/formvalidator.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/functions.js') }}"></script>
+  </head>
+  <body>
+
+    <!-- navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="/">Haven's Pizza</a>
+
+      <span class="navbar-text">
+        <a href="/dashboard">Home</a> |
+        <a href="/user/cart">Order(something here)</a> |
+        <a href="/user/{{session['user_id']}}/account">Account</a> |
+        <a href="/logout">Logout</a>
+      </span>
+    </nav>
+
+
+    <!-- main content -->
+    <div class="container text-white">
+      <div class="row">
+        <div class="col text-center">
+          <h2>Order</h2>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col col-md-4">
+          <div class="card bg-secondary">
+            <img src="/static/images/pizza_img.png" alt="pizza" class="card-img-top">
+            <div class="card-header">
+              Pizza
+            </div>
+            <div class="card-body">
+              <p class="card-text">Build your own custom pizza.</p>
+            </div>
+            <div class="card-footer">
+              <a href="/checkout"><button type="submit" class="btn btn-primary" name="button">Create Order</button></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </body>
+</html>

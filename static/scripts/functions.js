@@ -1,8 +1,6 @@
 function retrieve_alerts() {
   $.get('/alerts/retrieve', function(data) {
     result = JSON.parse(data);
-    console.log(result);
-    console.log(result.length);
 
     if(result.length > 0)
       $('#error_modal').modal('show');
@@ -22,7 +20,7 @@ function alert_body() {
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Errors</h5>
+            <h5 class="modal-title">Alerts</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="close" name="button">
               <span aria-hidden='true'>&times;</span>
             </button>

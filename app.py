@@ -10,6 +10,10 @@ from models import User
 # home-page
 @app.route("/")
 def index():
+
+    if 'user_id' in session.keys():
+        return redirect("/dashboard")
+
     return render_template("index.html")
 
 # add a user
@@ -35,6 +39,7 @@ def add_user():
 
     # add user
     if isValid:
+        alerts.append("Account successfully created.")
         User.add_user(request.form)
 
     return redirect("/")
@@ -52,6 +57,34 @@ def process_login():
         return redirect("/dashboard")
 
     return redirect("/login")
+
+# logout
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+@app.route("/dashboard")
+def dashboard():
+    if 'user_id' not in session.keys():
+        alerts.append("Not allowed")
+        return redirect("/")
+
+    return render_template("dashboard.html")
+
+
+# account page
+@app.route("/user/<user_id>/account")
+def account(user_id):
+    return render_template("account.html")
+
+# update Account
+@app.route("/user/<user_id>/account/update", methods=["POST"])
+def account_update(user_id):
+    User.update_user(request.form, user_id)
+    return redirect("/user/<user_id>/account")
+
+
 
 # retrieve alerts
 @app.route('/alerts/retrieve')
