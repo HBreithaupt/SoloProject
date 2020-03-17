@@ -3,6 +3,7 @@ from sqlalchemy.sql import func
 from config import alerts
 from flask import session
 import re
+from datetime import datetime
 
 pizza_toppings_table = db.Table('pizza_toppings',
 db.Column('pizza_id', db.Integer, db.ForeignKey('pizzas.id', ondelete='cascade'), primary_key=True),
@@ -18,6 +19,9 @@ class User(db.Model):
     city = db.Column(db.String(20))
     state = db.Column(db.String(2))
     password = db.Column(db.String(100))
+    logged_in = db.Column(db.Boolean, default=False)
+    logeed_in_time = db.Column(db.DateTime, onupdate=func.now())
+    orders = db.relationship('Order', back_populates='owner',lazy='dynamic')
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
     __table_args__=(db.UniqueConstraint('email'),)
@@ -85,14 +89,76 @@ class User(db.Model):
         db.session.commit()
         alerts.append("Account updated.")
         return
+
 class Order(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(30))
+    total_price = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete='cascade'), nullable=False)
+    status = db.Column(db.String(10))
+    owner = db.relationship('User', foreign_keys=[user_id], back_populates='orders')
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="cascade"), nullable=False)
-    user = db.relationship('User', foreign_keys=[user_id], backref="user_orders")
+
+    @classmethod
+    def create_order(cls, user_id):
+        order = Order(total_price=0, user_id=user_id, status='incomplete')
+        db.session.add(order)
+        db.session.commit()
+        db.session.refresh(order)
+        return order.id
+
+
+
+    def serialize_history(self):
+        result = []
+        products = self.order_products
+        result.append({'date_total': self.updated_at.strftime("%x") + ' - Total: $' + str(self.total_price)})
+        for product in products:
+            currProduct = {}
+            currDescription = product.type.capitalize() + ": "
+
+            if(product.type == 'pizza'):
+                currDescription += Pizza.query.filter_by(product_id=product.id).first().serialize_history()
+                currDescription += f" ${product.product_price}"
+
+            currProduct['description'] = currDescription
+
+            result.append(currProduct)
+
+
+        return result
+
+
+
+    def __repr__(self):
+        return f"{self.id}"
+
+
+
+class Product(db.Model):
+    __tablename__ = "products"
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(10))
+    quantity = db.Column(db.Integer)
+    product_price = db.Column(db.Float)
+    order_id = db.Column(db.Integer, db.ForeignKey("orders.id", ondelete='cascade'), nullable=False)
+    full_order = db.relationship('Order', foreign_keys=[order_id], backref="order_products")
+    created_at = db.Column(db.DateTime, server_default=func.now())
+    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+
+    @classmethod
+    def create_product(cls, type, order_id, product_price):
+        product = Product(type=type, quantity=1, order_id=order_id, product_price=product_price)
+        db.session.add(product)
+        db.session.flush()
+        return product.id
+
+    def serialize(self):
+        result = { 'price': self.product_price, 'quantity': self.quantity}
+        if self.type == 'pizza':
+            pizza = Pizza.query.filter_by(product_id=self.id).first()
+            return pizza.serialize(result)
 
 
 class Pizza(db.Model):
@@ -100,19 +166,68 @@ class Pizza(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     style = db.Column(db.String(15))
     size = db.Column(db.String(15))
+    pizza_price = db.Column(db.Float)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id", ondelete='cascade'), nullable=False)
     created_at = db.Column(db.DateTime, server_default=func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
-    #order_id = db.Column(db.Integer, db.ForeignKey("orders.id", ondelete="cascade"), nullable=False)
-    # order = db.relationship('Order', foreign_keys=[order_id], backref="pizza_order")
     toppings_on_this_pizza = db.relationship('Topping', secondary=pizza_toppings_table)
 
+    @classmethod
+    def create_pizza(self, data, product_id, pizza_price):
+        new_pizza = Pizza(style=data['pizza_style'], size=data['pizza_size'], pizza_price=pizza_price, product_id=product_id)
+        db.session.add(new_pizza)
+        db.session.commit()
+        db.session.expire(new_pizza)
+        db.session.refresh(new_pizza)
+        return new_pizza
+
+    def __repr__(self):
+        return f"{self.id, self.style, self.size, self.pizza_price}"
+
+    def serialize(self, result):
+        result['type'] = 'pizza'
+        result['style'] = self.style
+        result['size'] = self.size
+        toppings = self.toppings_on_this_pizza
+        toppings_str = ""
+        for topping in toppings:
+            toppings_str += topping.name + ", "
+
+        toppings_str = toppings_str[:-2]
+        result['toppings'] = toppings_str
+
+        return result
+
+    def serialize_history(self):
+        result = ""
+        result += self.size.capitalize() + ' ' + self.style.capitalize() + ' - '
+
+        toppings = self.toppings_on_this_pizza
+        toppings_str = ""
+        for topping in toppings:
+            toppings_str += topping.name.capitalize() + ', '
+
+        toppings_str = toppings_str[:-2]
+        result += toppings_str
+        return result
+
+class PizzaSizePrice(db.Model):
+    __tablename__ = "pizza_size_price"
+    id = db.Column(db.Integer, primary_key=True)
+    size = db.Column(db.String(10))
+    price = db.Column(db.Float)
+    created_at = db.Column(db.DateTime, server_default=func.now())
+    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
+    __table_args__=(db.UniqueConstraint('size'),)
 
 class Topping(db.Model):
     __tablename__ = "toppings"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Integer)
+    name = db.Column(db.Integer, unique=True)
+    topping_price = db.Column(db.Float)
     created_at = db.Column(db.DateTime, server_default = func.now())
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
-    #pizza_id = db.Column(db.Integer, db.ForeignKey("pizzas.id", ondelete="cascade"), nullable=False)
-    # order = db.relationship('Pizza', foreign_keys=[pizza_id], backref="pizza_toppings")
     pizzas_with_this_topping = db.relationship('Pizza', secondary=pizza_toppings_table)
+
+    def __repr__(self):
+        return f"id: {self.id}, name :{self.name}"

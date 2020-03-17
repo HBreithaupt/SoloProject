@@ -2,6 +2,8 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Haven's Pizza</title>
 
     <!-- bootstrap -->
@@ -26,7 +28,7 @@
 
       <span class="navbar-text">
         <a href="/dashboard">Home</a> |
-        <a href="/user/cart">Order(something here)</a> |
+        <a id="cart_display" href="/checkout/{{session['currOrder_id']}}">Order(0)</a> |
         <a href="/logout">Logout</a>
       </span>
     </nav>
@@ -34,10 +36,10 @@
 
     <!-- main content -->
     <div class="container-fluid text-white">
-    <div class="row">
+      <div class="row">
 
-      <!-- account update form -->
-      <div class="col col-md-6">
+        <!-- account update form -->
+        <div class="col col-md-6">
         <h3>Account Info</h3>
         <form class="" action="/user/{{session['user_id']}}/account/update" method="post">
           <div class="form-group">
@@ -126,12 +128,14 @@
         </form>
       </div>
 
-      <!-- order history -->
-      <div class="col col-mg-6">
-        <h3>Order History</h3>
+        <!-- order history -->
+        <div class="col col-md-6">
+          <fieldset id="order_history">
+            <legend>Order History</legend>
+            <!-- filled in by ajax -->
+          </fieldset>
+        </div>
       </div>
-
-    </div>
     </div>
   </body>
 </html>

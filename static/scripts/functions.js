@@ -37,9 +37,16 @@ function alert_body() {
 }
 
 
+function get_num_in_cart() {
+  $.get("/order/products/num/retrieve", function(data) {
+    $("#cart_display").html(`Order(${JSON.parse(data)})`);
+  });
+}
+
 $(document).ready(function () {
   alert_body();
   retrieve_alerts();
+  get_num_in_cart();
 
   if($('#error_body p').length) {
     $('#error_modal').modal('show');

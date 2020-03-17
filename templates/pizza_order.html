@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Haven's Pizza</title>
+
+    <!-- bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+
+
+    <!-- my sheets and scripts -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='scripts/formvalidator.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/functions.js') }}"></script>
+  </head>
+  <body>
+
+    <!-- navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="/">Haven's Pizza</a>
+
+      <span class="navbar-text">
+        <a href="/dashboard">Home</a> |
+        <a href="/checkout/{{session['currOrder_id']}}">Order(something here)</a> |
+        <a href="/user/{{session['user_id']}}/account">Account</a> |
+        <a href="/logout">Logout</a>
+      </span>
+    </nav>
+
+    <!-- order form -->
+    <div class="container text-white">
+      <form class="needs-validation mt-2" action="/order/pizza/process" method="post" novalidate>
+        <fieldset>
+          <!-- pizza stlye -->
+          <legend>Style</legend>
+          <div class="form-group">
+            <select class="form-control" name="pizza_style" required>
+              <option value="" selected>Choose a style...</option>
+              <option value="hand-tossed">Hand-Tossed</option>
+              <option value='pan'>Handmade Pan</option>
+              <option value="brooklyn">Brooklyn Style</option>
+              <option value="thin">Thin Crust</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <!-- size -->
+        <fieldset>
+          <legend>Size</legend>
+          <div class="form-group">
+            <select class="form-control" name="pizza_size" required>
+              <option value="" selected>Choose a size...</option>
+              <option value="small">Small <span>&#36;</span>{{small_price}}</option>
+              <option value="medium">Medium <span>&#36;</span>{{medium_price}}</option>
+              <option value="large">Large <span>&#36;</span>{{large_price}}</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <!-- toppings -->
+        <fieldset>
+          <legend>Toppings <span>50&#162; each</span></legend>
+          <legend>Meats</legend>
+          <div class="form-row">
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_pepperoni" value="pepperoni">
+              <label for="add_pepperoni">Pepperoni</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_ham" value="ham">
+              <label for="add_ham">Ham</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_beef" value="beef">
+              <label for="add_beef">Beef</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_salami" value="salami">
+              <label for="add_Salami">Salami</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_sausage" value="sausage">
+              <label for="add_sausage">Sausage</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_chicken" value="chicken">
+              <label for="add_chicken">Chicken</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_bacon" value="bacon">
+              <label for="add_bacon">Bacon</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_steak" value="steak">
+              <label for="add_steak">Steak</label>
+            </div>
+          </div>
+
+          <legend>Veggies</legend>
+          <div class="form-row">
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_jalapeno" value="jalanpeno">
+              <label for="add_jalapeno">Jalapeno</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_onions" value="onions">
+              <label for="add_onions">Onions</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_mushroom" value="mushroom">
+              <label for="add_mushroom">Mushrooms</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_olives" value="black olives">
+              <label for="add_olives">Black Olives</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_mushroom" value="mushroom">
+              <label for="add_pineapple">Pineapple</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_green_peppers" value="green peppers">
+              <label for="add_green_peppers">Green Peppers</label>
+            </div>
+            <div class="form-group col-md-2">
+              <input type="checkbox" name="add_spinach" value="spinach">
+              <label for="add_spinach">Spinach</label>
+            </div>
+          </div>
+        </fieldset>
+        <button type="submit" class='btn btn-primary mt-3' name="button">Submit</button>
+      </form>
+    </div>
+
+  </body>
+</html>

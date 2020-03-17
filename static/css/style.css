@@ -4,4 +4,22 @@ body {
 
 .container-fluid {
   margin: 2%;
+  padding-right: 5%;
+
+}
+
+
+
+fieldset {
+  display: block;
+  border: 2px groove;
+  padding: 10px;
+}
+
+legend {
+  width: auto;
+}
+
+hr {
+  border-color: white;
 }
