@@ -17,6 +17,10 @@
     <script src="{{ url_for('static', filename='scripts/formvalidator.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/functions.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/cart.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/map.js') }}"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfqY68UZ9AaRqx5z8MdiYfqnAmqmjaKJs&callback=initMap">
+    </script>
 
 
   </head>
@@ -41,6 +45,9 @@
             <legend>Items in your cart</legend>
             <!-- filled in by ajax -->
           </fieldset>
+        </div>
+        <div class="col-md-6">
+          <div id=map></div>
         </div>
       </div>
       <div class="row mt-3">
