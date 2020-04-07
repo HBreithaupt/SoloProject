@@ -148,8 +148,8 @@ class Product(db.Model):
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now())
 
     @classmethod
-    def create_product(cls, type, order_id, product_price):
-        product = Product(type=type, quantity=1, order_id=order_id, product_price=product_price)
+    def create_product(cls, type, order_id, product_price, quantity):
+        product = Product(type=type, quantity=quantity, order_id=order_id, product_price=product_price)
         db.session.add(product)
         db.session.flush()
         return product.id

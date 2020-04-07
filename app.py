@@ -197,14 +197,19 @@ def process_order_pizza():
 
     toppings = [val for key, val in request.form.items() if 'add_' in key]
 
+    #quantity of pizza's being added
+    quantity = int(request.form['pizza_quantity'])
+
     #calculate pizze price
     pizza_price = PizzaSizePrice.query.filter_by(size=request.form['pizza_size']).first().price
 
     #now add price of toppings (all toppings are 0.5c for now)
     toppings_price = 0.5 * len(toppings)
 
+    total_price = (pizza_price + toppings_price) * quantity
+    print(total_price)
     #create a new product and get the id
-    new_product_id = Product.create_product(type='pizza', order_id=session['currOrder_id'], product_price=pizza_price + toppings_price)
+    new_product_id = Product.create_product(type='pizza', order_id=session['currOrder_id'], product_price=total_price, quantity=quantity)
 
     #create a new pizza and get the object back to add toppings
     new_pizza_obj = Pizza.create_pizza(request.form, new_product_id, pizza_price)

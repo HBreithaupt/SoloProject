@@ -52,13 +52,23 @@
         <!-- size -->
         <fieldset>
           <legend>Size</legend>
-          <div class="form-group">
-            <select class="form-control" name="pizza_size" required>
-              <option value="" selected>Choose a size...</option>
-              <option value="small">Small <span>&#36;</span>{{small_price}}</option>
-              <option value="medium">Medium <span>&#36;</span>{{medium_price}}</option>
-              <option value="large">Large <span>&#36;</span>{{large_price}}</option>
-            </select>
+          <div class="form-row">
+            <div class="form-group col-md-8">
+              <select class="form-control" name="pizza_size" required>
+                <option value="" selected>Choose a size...</option>
+                <option value="small">Small <span>&#36;</span>{{small_price}}</option>
+                <option value="medium">Medium <span>&#36;</span>{{medium_price}}</option>
+                <option value="large">Large <span>&#36;</span>{{large_price}}</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <select class="form-control" name="pizza_quantity" required>
+                <option value="1" selected>1</option>
+                <option value="2" >2</option>
+                <option value="3" >3</option>
+                <option value="4" >4</option>
+              </select>
+            </div>
           </div>
         </fieldset>
 
