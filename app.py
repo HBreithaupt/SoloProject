@@ -75,7 +75,7 @@ def success():
 
     # create a new order for this user
     new_order_id = Order.create_order(session['user_id'])
-    
+
     session['currOrder_id'] = new_order_id
 
     alerts.append("Thank you for ordering with us!")
@@ -217,7 +217,13 @@ def process_order_pizza():
 
     return redirect(f"/checkout/{session['currOrder_id']}")
 
+# retrieve user's address
+@app.route("/user/address/retrieve")
+def retrieve_address():
+    user = User.query.filter_by(id=session['user_id']).first();
+    address = {'street': user.address, 'city': user.city, 'state': user.state}
 
+    return address
 
 #check out route
 @app.route("/checkout/<order_id>")
